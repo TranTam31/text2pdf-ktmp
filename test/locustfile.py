@@ -53,17 +53,19 @@ class FileUploadUser(HttpUser):
             response = self.client.post(endpoint, files=files, name=name)
             
             # Log kết quả
-            # if response.status_code == 200:
-            #     print(f"File uploaded successfully to {endpoint}!")
-            # else:
-            #     print(f"Failed to upload file to {endpoint}. Status code: {response.status_code}")
+            if response.status_code == 200:
+                print(f"File uploaded successfully to {endpoint}!")
+            else:
+                print(f"Failed to upload file to {endpoint}. Status code: {response.status_code}")
+
+    # dùng để gene ra image test api upload-rabbitmq
 
     # @task(1)
     # def upload_to_main_endpoint(self):
-    #     """Gửi file đến endpoint /upload"""
     #     self.upload_file("/upload-rabbitmq", name="POST /upload-rabbitmq")
+    
+    # dùng để gene ra image test api upload
     
     @task(1)
     def upload_to_main_endpoint(self):
-        """Gửi file đến endpoint /upload"""
         self.upload_file("/upload", name="POST /upload")

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+        }
+
+        input[type="file"] {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image to PDF Converter</h1>
+        <form id="uploadForm">
+            <label for="imageUpload">Choose an image:</label>
+            <input type="file" id="imageInput">
+            <button id="uploadButton">Upload và Tải về PDF</button>
+        </form>
+
+        <p id="status"></p>
+    </div>
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', function(e) {
+            e.preventDefault()
+            var input = document.getElementById('imageInput');
+            var file = input.files[0];
+            
+            if (!file) {
+                alert('Vui lòng chọn một tệp hình ảnh.');
+                return;
+            }
+            
+            var formData = new FormData();
+            formData.append('image', file);
+            
+            fetch('http://localhost:3000/upload-rabbitmq', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                console.log(response)
+                if (response.ok) {
+                    // Kiểm tra Content-Type để đảm bảo nhận được PDF
+                    var contentType = response.headers.get('Content-Type');
+                    if (contentType === 'application/pdf') {
+                        return response.blob();
+                    } else {
+                        throw new Error('Định dạng phản hồi không phải là PDF.');
+                    }
+                } else {
+                    throw new Error('Phản hồi mạng không thành công.');
+                }
+            })
+            .then(function(blob) {
+                // Tạo một liên kết để tải về tệp PDF
+                var link = document.createElement('a');
+                var url = window.URL.createObjectURL(blob);
+                link.href = url;
+                link.download = 'output.pdf';
+                document.body.appendChild(link);
+                link.click();
+                // Dọn dẹp sau khi tải xong
+                setTimeout(function() {
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);  
+                }, 100);
+            })
+            .catch(function(error) {
+                console.error('Lỗi:', error);
+                alert('Đã xảy ra lỗi khi xử lý tệp.');
+            });
+        });
+    </script>
+</body>
+</html>

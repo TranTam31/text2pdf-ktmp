@@ -102,11 +102,18 @@ const { v4: uuidv4 } = require("uuid");
 const amqplib = require("amqplib");
 const fs = require("fs");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
 
-app.post("/upload", upload.single("image"), async (req, res) => {
+app.use(
+    cors({
+        origin: "*",
+    })
+);
+
+app.post("/upload-rabbitmq", upload.single("image"), async (req, res) => {
     const file = req.file;
 
     if (!file) {
