@@ -61,11 +61,11 @@ class FileUploadUser(HttpUser):
     # dùng để gene ra image test api upload-rabbitmq
 
     # @task(1)
-    # def upload_to_main_endpoint(self):
-    #     self.upload_file("/upload-rabbitmq", name="POST /upload-rabbitmq")
+    def upload_to_main_endpoint(self):
+        self.upload_file("/upload-rabbitmq", name="POST /upload-rabbitmq")
     
     # dùng để gene ra image test api upload
     
-    @task(1)
-    def upload_to_main_endpoint(self):
-        self.upload_file("/upload", name="POST /upload")
+    # @task(1)
+    # def upload_to_main_endpoint(self):
+    #     self.upload_file("/upload", name="POST /upload")
