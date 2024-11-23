@@ -13,11 +13,9 @@ async function startWorker() {
 
     channel.consume("translate_queue", async (msg) => {
         const { taskId, text } = JSON.parse(msg.content.toString());
-
         try {
             console.log(`[Worker Translate] Dịch văn bản: ${text}`);
             const translatedText = await translate(text);
-
             console.log(`[Worker Translate] Hoàn thành dịch, gửi kết quả sang 'pdf_queue'`);
             channel.sendToQueue(
                 "pdf_queue",
@@ -27,7 +25,7 @@ async function startWorker() {
             channel.ack(msg);
         } catch (error) {
             console.error("[Worker Translate] Lỗi xử lý dịch:", error);
-            channel.nack(msg, false, false); // Không xử lý lại message
+            channel.nack(msg, false, false);
         }
     });
 }

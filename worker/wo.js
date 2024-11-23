@@ -20,7 +20,6 @@ async function startWorker() {
         try {
             console.log(`[Worker OCR] Xử lý OCR cho file: ${absolutePath}`);
 
-            // Thực hiện OCR
             const text = await ocr.image2text(absolutePath);
 
             console.log(`[Worker OCR] OCR hoàn thành, gửi kết quả sang 'translate_queue'`);
@@ -29,7 +28,6 @@ async function startWorker() {
                 Buffer.from(JSON.stringify({ taskId, text }))
             );
 
-            // Xóa file ảnh sau khi xử lý xong
             fs.unlink(absolutePath, (err) => {
                 if (err) {
                     console.error(`[Worker OCR] Lỗi khi xóa file ảnh: ${absolutePath}`, err);
@@ -38,10 +36,10 @@ async function startWorker() {
                 }
             });
 
-            channel.ack(msg); // Xác nhận message đã được xử lý
+            channel.ack(msg);
         } catch (error) {
             console.error("[Worker OCR] Lỗi xử lý OCR:", error);
-            channel.nack(msg, false, false); // Không xử lý lại message
+            channel.nack(msg, false, false);
         }
     });
 }

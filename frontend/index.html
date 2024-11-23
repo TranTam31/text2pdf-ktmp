@@ -102,7 +102,6 @@
             .then(function(response) {
                 console.log(response)
                 if (response.ok) {
-                    // Kiểm tra Content-Type để đảm bảo nhận được PDF
                     var contentType = response.headers.get('Content-Type');
                     if (contentType === 'application/pdf') {
                         return response.blob();
@@ -114,14 +113,12 @@
                 }
             })
             .then(function(blob) {
-                // Tạo một liên kết để tải về tệp PDF
                 var link = document.createElement('a');
                 var url = window.URL.createObjectURL(blob);
                 link.href = url;
                 link.download = 'output.pdf';
                 document.body.appendChild(link);
                 link.click();
-                // Dọn dẹp sau khi tải xong
                 setTimeout(function() {
                     document.body.removeChild(link);
                     window.URL.revokeObjectURL(url);  
