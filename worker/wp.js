@@ -25,6 +25,15 @@ async function startWorker() {
             );
 
             console.log(`[Worker PDF] Hoàn thành PDF: ${pdfFilePath}`);
+
+            fs.unlink(pdfFilePath, (err) => {
+                if (err) {
+                    console.error(`[Worker PDF] Lỗi khi xóa file PDF: ${pdfFilePath}`, err);
+                } else {
+                    console.log(`[Worker PDF] Đã xóa file PDF: ${pdfFilePath}`);
+                }
+            });
+
             channel.ack(msg);
         } catch (error) {
             console.error("[Worker PDF] Lỗi xử lý tạo PDF:", error);
